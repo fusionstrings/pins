@@ -3,17 +3,6 @@ import { contentType } from "#media_types"
 import { extname } from "#path";
 import importmap from '#importmap' assert { type: 'json' };
 
-const PORT = Deno.env.get('PORT');
-
-function onListen({ port, hostname }: Deno.ServeOptions) {
-  try {
-    console.info(`Server started at http://${hostname}:${port}`);
-  } catch (error) {
-    console.error(error.message || error.toString());
-    throw error;
-  }
-}
-
 async function errorResponse(error: Error) {
   console.error(error.message || error.toString());
 
@@ -39,7 +28,7 @@ async function requestHandler(request: Request) {
 
       const resourceURL = new URL(resourcePath, import.meta.url).toString();
 
-      const response =  await fetch(resourceURL)
+      const response = await fetch(resourceURL)
 
       const updatedResponse = new Response(response.body)
       const responseContentType = contentType(extname(resourceURL)) || contentType("text/html");
@@ -53,11 +42,23 @@ async function requestHandler(request: Request) {
   }
 }
 
-const serverOptions: Deno.ServeOptions = {
-  onListen,
-  port: PORT ? parseInt(PORT, 10) : 1729
+
+function onListen({ port, hostname }: Deno.ServeOptions) {
+  try {
+    console.info(`Server started at http://${hostname}:${port}`);
+  } catch (error) {
+    console.error(error.message || error.toString());
+    throw error;
+  }
 }
 
 if (import.meta?.main) {
+  const PORT = Deno.env.get('PORT');
+
+  const serverOptions: Deno.ServeOptions = {
+    onListen,
+    port: PORT ? parseInt(PORT, 10) : 1729
+  }
+  
   Deno.serve(serverOptions, requestHandler);
 }

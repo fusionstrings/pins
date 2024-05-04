@@ -1,0 +1,7 @@
+{
+    "imports": {
+        "#home": "./www/index.html",
+        "#main.ts": "./main.ts",
+        "#modules/constants.ts": "./www/modules/constants.ts"
+    }
+}

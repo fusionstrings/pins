@@ -34,15 +34,15 @@ async function requestHandler(request: Request) {
       const resourcePath = importmap.imports[pathnameHandler as Resource];
 
       if (resourcePath.startsWith('./')) {
-        return serveFile(request, importmap.imports[pathnameHandler as Resource])
+        return serveFile(request, resourcePath)
       }
 
       const resourceURL = new URL(resourcePath, import.meta.url).toString();
-      
-      const responseContentType = contentType(extname(resourceURL)) || contentType("text/html");
 
       const response =  await fetch(resourceURL)
+
       const updatedResponse = new Response(response.body)
+      const responseContentType = contentType(extname(resourceURL)) || contentType("text/html");
       updatedResponse.headers.set("content-type", responseContentType)
       return updatedResponse
     }
